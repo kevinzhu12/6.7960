@@ -23,7 +23,7 @@ init_image = init_image.resize((512, 512))
 
 # result_img.save("intermediate.png")
 
-prompt = "Oil painting of a man pouring tea for himself at an old table in a colonial household"
+prompt = input("Modification from text2img.png: ")
 # strength determines how much of original image is modified (0=None, 1=New)
 strength = 0.6
 
