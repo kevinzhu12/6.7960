@@ -5,6 +5,7 @@ from transformers import pipeline
 from PIL import Image
 from clip_classifier import load_cod10k_lazy
 import math
+import json
 from tqdm import tqdm
 
 torch.backends.cudnn.enabled = False
@@ -58,20 +59,15 @@ def eval(dataset_split, num_samples=None):
         if true_label_text == likelihoods[0]['label']:
             correct += 1
     
-    mean_nll = np.mean(nlls)
-    std_nll = np.std(nlls)
-    mean_probability = np.mean(scores)
-    std_probability = np.std(scores)
-    accuracy = correct / num_samples
-    class_mean_nlls = {k: np.mean(v) for k, v in class_nlls.items()}
-    class_mean_scores = {k: np.mean(v) for k, v in class_scores.items()}
+    mean_nll = float(np.mean(nlls))
+    std_nll = float(np.std(nlls))
+    mean_probability = float(np.mean(scores))
+    std_probability = float(np.std(scores))
+    accuracy = float(correct / num_samples)
+    class_mean_nlls = {k: float(np.mean(v)) for k, v in class_nlls.items()}
+    class_mean_scores = {k: float(np.mean(v)) for k, v in class_scores.items()}
 
-    print(f"NLL results (n={num_samples}):")
-    print(f"NLL: {mean_nll:.4f} ± {std_nll:.4f}")
-    print(f"Probability: {mean_probability:.4f} ± {std_probability:.4f}")
-    print(f"Accuracy: {accuracy:.4f}")
-
-    return {
+    results = {
         'mean_nll': mean_nll,
         'std_nll': std_nll,
         'mean_probability': mean_probability,
@@ -79,9 +75,11 @@ def eval(dataset_split, num_samples=None):
         'class_mean_nlls': class_mean_nlls,
         'class_mean_scores': class_mean_scores,
         'accuracy': accuracy,
-        'correct': correct,
-        'num_samples': num_samples
+        'correct': int(correct),
+        'num_samples': int(num_samples)
     }
+
+    return results
 
 if __name__ == "__main__":
 
@@ -101,6 +99,14 @@ if __name__ == "__main__":
         device=0
     )
 
+    for split in ['train', 'test']:
 
-    results = eval(dataset['train'], num_samples=None)
-    print(results)
+        results = eval(dataset[split], num_samples=None)
+        
+        # Write results to JSON file
+        output_file = f'outputs/eval_results_{split}.json'
+        with open(output_file, 'w') as f:
+            json.dump(results, f, indent=2)
+        
+        print(f"Results written to {output_file}")
+        print(f"Summary: NLL={results['mean_nll']:.4f}, Probability={results['mean_probability']:.4f}, Accuracy={results['accuracy']:.4f}")
