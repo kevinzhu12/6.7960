@@ -11,3 +11,7 @@ outputs/*
 
 # Virtual environments
 .venv
+
+/watch_folder
+/wandb
+/ddpo_output

@@ -3,7 +3,7 @@ import numpy as np
 from collections import defaultdict
 from transformers import pipeline
 from PIL import Image
-from clip_classifier import load_cod10k_lazy
+from dataset import load_dataset
 import math
 import json
 from tqdm import tqdm
@@ -83,8 +83,10 @@ def eval(dataset_split, num_samples=None):
 
 if __name__ == "__main__":
 
+    DATASET_ROOT = "datasets/COD10K-v3-enhanced"
+
     print("Loading dataset...")
-    dataset = load_cod10k_lazy()
+    dataset = load_dataset(dataset_root=DATASET_ROOT)
 
     label_names = dataset['train'].features['label'].names
     print(f"Found {len(label_names)} labels: {label_names[:10]}")
@@ -104,7 +106,7 @@ if __name__ == "__main__":
         results = eval(dataset[split], num_samples=None)
         
         # Write results to JSON file
-        output_file = f'outputs/eval_results_{split}.json'
+        output_file = f'eval_outputs/eval_results_{DATASET_ROOT.split("/")[-1]}_{split}.json'
         with open(output_file, 'w') as f:
             json.dump(results, f, indent=2)
         

@@ -37,7 +37,7 @@ init_image = init_image.resize((512, 512))
 # prompt = 'enhance the animal in the image to enable a classifier to easily identify it'
 prompt = ''
 # strength determines how much of original image is modified (0=None, 1=New)
-strength = 0.3
+strength = 0.2
 
 image = pipe(
     prompt=prompt,
@@ -46,4 +46,4 @@ image = pipe(
     guidance_scale=3 # how strongly to follow text prompt
 ).images[0]
 
-image.save("outputs/output2_img2img.png")
+image.save("outputs/no_prompt_batfish_1_0.2_strength_3_guidance_img2img.png")

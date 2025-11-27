@@ -6,3 +6,6 @@ transformers
 diffusers
 datasets
 accelerate
+lpips
+peft
+trl
